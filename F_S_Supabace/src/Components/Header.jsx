@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { useState }from 'react'
 import { Link } from 'react-router'
+import { FaUserAlt } from "react-icons/fa";
+
 
 const Header = () => {
+
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+    const avater_url = null;
+    
+    
   return (
     <header className='bg-white shadow'>
 
@@ -28,11 +38,23 @@ const Header = () => {
                 </div>
                 {/* Right */}
                 <div className='flex space-x-8 items-center'>
-                <div>
-                    {/* Profile */}
-                    <span>Hello, Abdalla</span>
-                </div>
-                <div className='flex space-x-8 items-center'>
+                     {/* Profile */}
+                {isLoggedIn ? (
+                    <>
+                    <div> 
+                    <span className='text-gray-700 text-sm'>Hello, Abdalla</span>
+                    </div>
+                    <div>
+                        <button className='flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500'> 
+                            {
+                                avater_url ? <img className='w-8 h-8 rounded-full ' src={avater_url}/> : <FaUserAlt className='text-orange-600' />
+
+                            }
+                        </button>
+                    </div>
+                </>
+                ) : (
+                    <div className='flex space-x-8 items-center'>
                     {/* Buttons */}
                     <Link to='singin' className='inline-flex item-center justify-center px-4 py-2 border text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-ofset-2 focus:ring-orange-500'>
                     Sing In
@@ -41,6 +63,8 @@ const Header = () => {
                     Sing Up
                     </Link>
                 </div>
+                )}
+                
             </div>
             </div>
 

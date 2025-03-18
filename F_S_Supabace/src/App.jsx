@@ -6,9 +6,10 @@ import SingInPage from "./Pages/SingInPage"
 import SingUpPage from "./Pages/SingUpPage"
 import Header from "./Components/Header"
 import Footer from "./Components/Footer"
+import { useState } from "react"
 
 function App() {
-  
+
 
   return (
     <div>
