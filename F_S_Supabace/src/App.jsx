@@ -25,7 +25,7 @@ function App() {
 
             {/* unauthanticated routes(redirect to home if logged in ) */}
 
-            <Route path="singIn" element={<SingInPage/>} />
+            <Route path="singin" element={<SingInPage/>} />
             <Route path="singup" element={<SingUpPage />} />
           </Routes>
         </main>

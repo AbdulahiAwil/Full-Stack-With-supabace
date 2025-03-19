@@ -125,7 +125,7 @@ const Header = () => {
              {!isLoggedIn && (
                 <>
                 <Link to='/signin' className='block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'>Sign In</Link>
-                <Link to='/signout' className='block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'>Sign Out</Link>
+                <Link to='/signup' className='block w-full text-left pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'>Sign Out</Link>
 
                 </>
              )}
