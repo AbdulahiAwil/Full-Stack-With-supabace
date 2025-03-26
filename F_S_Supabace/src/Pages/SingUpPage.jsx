@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router';
+import { singUp } from '../lib/auth'
 
 function SingUpPage() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,32 @@ function SingUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (event) =>{
+    event.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    if(password !== confirmPassword){
+      setError("Password do not match")
+      setIsLoading(false);
+      return
+    }
+
+    try {
+      await singUp(email, password, username)
+      setSuccess(true)
+    }catch (error) {
+
+      console.error(error)
+      setError(error.message || "Failed to create account. Please try again")
+
+    }finally{
+      setIsLoading(false)
+    }
+  }
+
+
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
 
@@ -20,7 +47,14 @@ function SingUpPage() {
         </div>
         {/* Form info */}
         <div className='bg-white rounded-lg shadow-md p-8'>
-          <form>
+          {
+            error && (
+              <div className='mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm'>
+                {error}
+              </div>
+            )
+          }
+          <form onSubmit={handleSubmit}>
             <div className='mb-6'>
               <label className='block text-gray-700 text-sm font-semibold mb-2' htmlFor="email">
                 Email Address 
@@ -61,7 +95,7 @@ function SingUpPage() {
               <label className='block text-gray-700 text-sm font-semibold mb-2' htmlFor="confirmPassword">
                 Confirm Password 
               </label>
-              <input type="confirmPassword" id="confirmPassword"
+              <input type="password" id="confirmPassword"
               className='w-full px-4 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500' 
               placeholder='*************'
               value={confirmPassword}
