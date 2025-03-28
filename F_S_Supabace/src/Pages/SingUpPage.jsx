@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { singUp } from '../lib/auth'
 
 function SingUpPage() {
@@ -10,6 +10,8 @@ function SingUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  const navigate = useNavigate()
 
   const handleSubmit = async (event) =>{
     event.preventDefault();
@@ -25,6 +27,11 @@ function SingUpPage() {
     try {
       await singUp(email, password, username)
       setSuccess(true)
+
+      setTimeout(() => {
+        navigate('/singin')
+      }, 3000)
+
     }catch (error) {
 
       console.error(error)
@@ -33,6 +40,26 @@ function SingUpPage() {
     }finally{
       setIsLoading(false)
     }
+  }
+
+  if(success){
+
+  return(
+    <div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
+      <div className='max-w-md w-full text-center'>
+        <div className='bg-white rounded-lg shadow-md p-8'>
+          <div className='text-green-500 text-5xl mb-4'>✓</div>
+          <h2 className='text-2xl font-bold mb-2'>Account Created!</h2>
+          <p className='text-gray-600 mb-4'>
+            Your account has been created successfully. Please your email varification
+          </p>
+          <p className='text-gray-500 text-sm'>
+            Redirecting to sign in page a few seconds...
+          </p>
+        </div>
+      </div>
+    </div>
+  )
   }
 
 
