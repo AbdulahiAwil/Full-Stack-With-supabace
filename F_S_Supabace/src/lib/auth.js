@@ -1,8 +1,8 @@
 import supabase from "./supabase";
 
-export async function singUp(email,password, usename="") {
+export async function singUp(email,password, username="") {
     
-let data = await supabase.auth.signUp({
+let { data, error } = await supabase.auth.signUp({
     email: email,
     password: password
   })
@@ -16,14 +16,14 @@ let data = await supabase.auth.signUp({
         }
     
 
-    const displayName = usename || email.split("@")[0];
+    const displayName = username || email.split("@")[0];
 
     const {data: profileData, error : profileErorr} = await supabase
     .from('users')
     .insert({
         id: data.user.id,
-        usename: displayName,
-        avatar_url: null
+        username: displayName,
+        avater_url: null
     })
     .select()
     .single()
@@ -45,7 +45,9 @@ export async function singIn(email, password) {
     email: email,
     password: password
   })
-  if (error) throw error
+
+  console.log("user info ", data)
+  if(error) throw error
 
   // Check if user profile exists, create if it doesn't
   if(data?.user){
@@ -61,16 +63,20 @@ export async function singIn(email, password) {
 
 export async function getUserProfile(userId) {
 
-  const { data : sessionData} = await supabase.auth.getSession()
+  const { data : sessionData } = await supabase.auth.getSession()
 
-  const { data : userData, error} = await supabase.from('users')
-
-  .select("*")
-  .eq("id", userId)
+  const { data : error} = await supabase.from('users')
+  .select('*')
+  .eq('id', userId)
   .single() 
 
   if(error && error.code === "PGRST116"){
     console.log('No profile found, attempting to create one for user:', userId)
+
+    // get user email to drive username if needed
+
+    const { data : userData} = await supabase.auth.getUser();
+    console.log("True data", userData);
 
     const email = userData?.user.email;
 
@@ -78,12 +84,12 @@ export async function getUserProfile(userId) {
 
     // Creation Profile
 
-    const {data: newProfileData, error : profileErorr} = await supabase
+    const {data: newProfile, error : profileErorr} = await supabase
     .from('users')
     .insert({
         id: userId,
         usename: defaultUsername,
-        avatar_url: null
+        avater_url: null
     })
     .select()
     .single()
