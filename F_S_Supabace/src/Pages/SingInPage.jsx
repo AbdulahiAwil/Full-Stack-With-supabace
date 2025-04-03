@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router';
 import { singIn } from '../lib/auth';
 
+
 function SingInPage() {
   const [email, setEmail] = useState('');
   
@@ -11,6 +12,8 @@ function SingInPage() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate()
+
+ 
 
   const handleSubmit = async(event) => {
     event.preventDefault()

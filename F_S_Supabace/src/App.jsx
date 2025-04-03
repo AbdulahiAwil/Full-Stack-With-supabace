@@ -7,11 +7,14 @@ import SingUpPage from "./Pages/SingUpPage"
 import Header from "./Components/Header"
 import Footer from "./Components/Footer"
 import { useState } from "react"
+import { AuthProvider } from "./context/AuthContext"
+import AnAuthenticatedRoute from "./Components/AnAuthenticatedRoute"
 
 function App() {
 
 
   return (
+    <AuthProvider>
     <div>
       {/* Header */}
       <Header />
@@ -25,14 +28,25 @@ function App() {
 
             {/* unauthanticated routes(redirect to home if logged in ) */}
 
-            <Route path="singin" element={<SingInPage/>} />
-            <Route path="singup" element={<SingUpPage />} />
+            <Route path="/singin" 
+            element={
+            <AnAuthenticatedRoute>
+               <SingInPage />
+            </AnAuthenticatedRoute>
+           } />
+            <Route path="/singup" 
+            element={
+              <AnAuthenticatedRoute>
+              <SingUpPage />
+              </AnAuthenticatedRoute>
+            } />
           </Routes>
         </main>
 
       {/* Footer */}
       <Footer />
     </div>
+    </AuthProvider>
   )
 }
 
