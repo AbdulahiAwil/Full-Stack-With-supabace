@@ -25,7 +25,10 @@ function SingInPage() {
       await singIn(email, password);
       navigate('/')
     }catch(error){
+      setError(error.message || "Failed to sign in Please check your credentials.")
       console.log("error", error)
+    }finally{
+      setIsLoading(false)
     }
   }
 

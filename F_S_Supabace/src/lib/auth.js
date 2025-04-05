@@ -1,3 +1,4 @@
+import { data } from "react-router";
 import supabase from "./supabase";
 
 export async function singUp(email,password, username="") {
@@ -65,7 +66,7 @@ export async function getUserProfile(userId) {
 
   const { data : sessionData } = await supabase.auth.getSession()
 
-  const { data : error} = await supabase.from('users')
+  const { data : error } = await supabase.from('users')
   .select('*')
   .eq('id', userId)
   .single() 
@@ -75,7 +76,8 @@ export async function getUserProfile(userId) {
 
     // get user email to drive username if needed
 
-    const { data : userData} = await supabase.auth.getUser();
+    const { data : userData } = await supabase.auth.getUser();
+
     console.log("True data", userData);
 
     const email = userData?.user.email;
@@ -88,7 +90,7 @@ export async function getUserProfile(userId) {
     .from('users')
     .insert({
         id: userId,
-        usename: defaultUsername,
+        username: defaultUsername,
         avater_url: null
     })
     .select()
@@ -111,7 +113,7 @@ export async function getUserProfile(userId) {
 
   console.log("exiting profile")
 
-  return sessionData
+  return data
 
   
 }
@@ -124,4 +126,10 @@ export function onAuthChange(callback){
   })
 
   return () => data.subscription.unsubscribe();
+}
+
+// SignOut the current user
+
+export async function signOut(params) {
+  await supabase.auth.signOut()
 }

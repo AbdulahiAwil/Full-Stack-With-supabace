@@ -3,13 +3,17 @@ import { Link } from 'react-router'
 import { FaUserAlt } from "react-icons/fa";
 import { CiMenuBurger } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
+import { useAuth } from '../context/AuthContext';
+import { signOut } from '../lib/auth';
 
 
 const Header = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const {isLoggedIn, profile, logout} = useAuth();
+
+    // console.log("user profile", profile?.session?.user?.email.split("@")[0]);
 
     const avater_url = null;
     
@@ -44,7 +48,7 @@ const Header = () => {
                 {isLoggedIn ? (
                     <>
                     <div> 
-                    <span className='text-gray-700 text-sm'>Hello, Abdalla</span>
+                    <span className='text-gray-700 text-sm'>Hello,</span>
                     </div>
                     <div className='relative'>
                         <button className='flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500' 
@@ -63,7 +67,7 @@ const Header = () => {
                              <div></div>
                              <Link className='block px-4 py-2 text-gray-700 hover:bg-gray-100'>Your Profile</Link>
                              <Link className='block px-4 py-2 text-gray-700 hover:bg-gray-100' >Manage Articles</Link>
-                             <Link className='block px-4 py-2 text-gray-700 hover:bg-gray-100' >Signout</Link>
+                             <button onClick={()=> logout()} className='block px-4 py-2 text-gray-700 hover:bg-gray-100' >Signout</button>
                          </div>
                         )}
                        

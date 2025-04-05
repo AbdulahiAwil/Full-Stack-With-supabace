@@ -9,6 +9,10 @@ import Footer from "./Components/Footer"
 import { useState } from "react"
 import { AuthProvider } from "./context/AuthContext"
 import AnAuthenticatedRoute from "./Components/AnAuthenticatedRoute"
+import ArticleEditorPage from "./Pages/ArticleEditorPage"
+import ManageArticlePage from "./Pages/ManageArticlePage"
+import ProfilePage from "./Pages/ProfilePage"
+import ProtectedRoute from "./Components/ProtectedRoute"
 
 function App() {
 
@@ -39,6 +43,38 @@ function App() {
               <AnAuthenticatedRoute>
               <SingUpPage />
               </AnAuthenticatedRoute>
+            } />
+
+            {/* Protected route */}
+
+            <Route path="/editor" 
+            element={ 
+              <ProtectedRoute>
+                 <ArticleEditorPage />
+              </ProtectedRoute>
+           
+            } />
+            <Route path="/editor/:id" 
+            element={ 
+              <ProtectedRoute>
+                 <ArticleEditorPage />
+              </ProtectedRoute>
+           
+            } />
+            <Route path="/manage-articles" 
+            element={
+              <ProtectedRoute>
+                <ManageArticlePage />
+              </ProtectedRoute> 
+            
+            } />
+            <Route path="/profile" 
+            element={
+              <ProtectedRoute>
+                 <ProfilePage />
+              </ProtectedRoute> 
+           
+
             } />
           </Routes>
         </main>
