@@ -10,27 +10,30 @@ export function AuthProvider({ children }){
     const [isLoading, setIsLoading] = useState(true);
 
 
-    useEffect(()=>{
+    useEffect(() => {
+
         const cleanUp = onAuthChange(async (user) => {
+
             setUser(user);
 
-            if(user){
-                try {
+            if (user) {
 
-                    const userProfile = await getUserProfile(user.id)
-                    setProfile(userProfile)
-                    
+                try {
+                    const userProfile = await getUserProfile(user.id);
+                    setProfile(userProfile);
                 } catch (error) {
                     console.error("Error fetching user profile: ", error)
                 }
-            }else{
+
+            } else {
                 setProfile(null)
             }
             setIsLoading(false)
         })
-            return cleanUp;
-    }, [])
 
+        return cleanUp;
+
+    }, [])
 
     
         

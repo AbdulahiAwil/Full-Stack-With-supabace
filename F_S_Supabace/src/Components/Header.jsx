@@ -48,7 +48,7 @@ const Header = () => {
                 {isLoggedIn ? (
                     <>
                     <div> 
-                    <span className='text-gray-700 text-sm'>Hello,</span>
+                    <span className='text-gray-700 text-sm'>Hello, {profile.username}</span>
                     </div>
                     <div className='relative'>
                         <button className='flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500' 

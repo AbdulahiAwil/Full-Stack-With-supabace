@@ -1,4 +1,4 @@
-import { data } from "react-router";
+
 import supabase from "./supabase";
 
 export async function singUp(email,password, username="") {
@@ -7,9 +7,11 @@ let { data, error } = await supabase.auth.signUp({
     email: email,
     password: password
   })
+
+  console.log('Auth signup successful:', data)
   
     if(data?.user){
-        const { data: sessionData } = await supabase.auth.getSession()
+      const { data : sessionData } = await supabase.auth.getSession()
 
         if(!sessionData?.session) {
           console.log('No active session yet - profile will be created on first signin')
@@ -65,20 +67,22 @@ export async function singIn(email, password) {
 export async function getUserProfile(userId) {
 
   const { data : sessionData } = await supabase.auth.getSession()
+  const { data , error } = await supabase.from('users')
+        .select("*")
+        .eq("id", userId)
+        .single()
 
-  const { data : error } = await supabase.from('users')
-  .select('*')
-  .eq('id', userId)
-  .single() 
+  
+        // if user doest exist , create new one 
 
-  if(error && error.code === "PGRST116"){
-    console.log('No profile found, attempting to create one for user:', userId)
+        if(error && error.code === "PGRST116"){
+          console.log('No profile found, attempting to create one for user:', userId)
 
     // get user email to drive username if needed
 
     const { data : userData } = await supabase.auth.getUser();
 
-    console.log("True data", userData);
+    console.log("true data", userData)
 
     const email = userData?.user.email;
 
@@ -86,38 +90,38 @@ export async function getUserProfile(userId) {
 
     // Creation Profile
 
-    const {data: newProfile, error : profileErorr} = await supabase
-    .from('users')
-    .insert({
-        id: userId,
-        username: defaultUsername,
-        avater_url: null
-    })
-    .select()
-    .single()
+    const { data: newProfile, error : profileError } = await supabase
+    
+        .from('users')
+        .insert({
+            id: userId,
+            username: defaultUsername,
+            avater_url: null
+        })
+        .select()
+        .single()
 
-    if(profileErorr){
-      console.error("profile creation erorr:", profileErorr)
-      throw profileErorr
-    }else{
-      console.log("Profile created successfully", newProfile)
-    }
+        if(profileError){
+            console.error("profile creation error:", profileError)
+            throw profileError
+        }else{
+            console.log("Profile created successfully", newProfile)
+        }
 
-    return newProfile
-  }
+        return newProfile
+        }
 
-  if(error){
-    console.error('Error fetching profile:',error)
-    throw error;
-  }
 
-  console.log("exiting profile")
+        // general error 
+        if(error){
+            console.error('Error fetching profile:', error)
+            throw error
+        }
 
-  return data
+    console.log("exiting profile")
 
-  
+        return data
 }
-
 
 export function onAuthChange(callback){
 
