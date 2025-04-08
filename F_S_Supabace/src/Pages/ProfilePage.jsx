@@ -1,14 +1,126 @@
 import React, { use, useEffect, useState } from "react";
 import { FiCamera, FiMail, FiUser } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
+import { getUserProfile } from "../lib/auth";
+import supabase from "../lib/supabase";
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState(null);
-  const [avatar, setAvatar] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [avater, setAvater] = useState(null);
+  const [avaterUrl, setAvaterUrl] = useState(null);
 
   const { user } = useAuth();
+
+  useEffect(() => {
+
+        if (user) {
+            fetchUserProfile()
+
+        }
+
+    }, [user])
+
+    const fetchUserProfile = async () => {
+        try {
+            setLoading(true);
+            const { username, avater_url } = await getUserProfile(user.id);
+            if (username) {
+                setUsername(username);
+                setAvaterUrl(avater_url)
+            }
+            return
+        } catch (error) {
+            console.log("error getting usr profile", error)
+        } finally {
+            setLoading(false)
+        }
+}
+
+
+
+  const handleAvatarChange = (e) => {
+
+    if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error("heyyyy file size is too large", { position: "top-right" })
+            return
+        }
+
+        setAvater(file)
+
+        const previewURL = URL.createObjectURL(file)
+        setAvaterUrl(previewURL)
+
+    }
+
+
+}
+
+
+const handleSubmit = async (e) => {
+
+  e.preventDefault();
+
+  try {
+    setLoading(true);
+
+      let updates = { username }
+
+      // if file selected upload first
+      if (avater) {
+
+          const fileExt = avater.name.split(".").pop();
+          const fileName = `${user.id}-${Math.random().toString(36).substring(2)}`;
+          const filePath = `avaters/${fileName}.${fileExt}`;
+
+          const { error: uploadError } = await supabase.storage.from("avaters").upload(filePath, avater);
+
+          if (uploadError) throw uploadError
+
+            // get the uploaded url
+            const { data } = supabase.storage.from("avaters")
+            .getPublicUrl(filePath);
+
+        updates = {
+            ...updates,
+            avater_url: data.publicUrl
+        }
+
+        setAvaterUrl(data.publicUrl)
+    }
+
+    console.log("updates to be applied")
+
+    const { error, data } = await supabase
+
+        .from('users')
+        .update(updates)
+        .eq('id', user.id)
+        .select('username, avater_url')
+        .single();
+
+    if (error) throw error
+
+    if (data) {
+        setAvaterUrl(data.avater_url)
+        setUsername(data.username)
+    }
+
+    toast.success("Profile updated successfully")
+
+      
+      
+  } catch (error) {
+          toast.error(error.message || "error updating user profile")
+      }
+
+    }
+    
+
 
   return (
     <div className='className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
@@ -24,7 +136,7 @@ const ProfilePage = () => {
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
                   <img
                     src={
-                      avatarUrl ||
+                      avaterUrl ||
                       "https://images.unsplash.com/photo-1495211895963-08d8812dcbf0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                     }
                     alt="Profile"
@@ -34,7 +146,7 @@ const ProfilePage = () => {
                 {/* input image upload */}
 
                 <label
-                  htmlFor="avatar-upload"
+                  htmlFor="avater-upload"
                   className="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-lg cursor-pointer transform transition-transform duration-200 hover:scale-110"
                 >
                   <FiCamera className="w-5 h-5 text-orange-600" />
@@ -42,10 +154,10 @@ const ProfilePage = () => {
 
                 <input
                   type="file"
-                  id="avatar-upload"
+                  id="avater-upload"
                   className=" hidden"
                   accept="image/*"
-                  //  onChange={handleAvatarChange}
+                   onChange={handleAvatarChange}
                 />
               </div>
               {/* user info  */}
@@ -56,7 +168,7 @@ const ProfilePage = () => {
             </div>
           </div>
           {/* Profile form*/}
-          <form className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
